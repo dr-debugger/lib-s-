@@ -1,0 +1,15 @@
+.container{
+    width: 300px;
+    height: 100px;
+    margin: 10px;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+#progressBar{
+    height: 5px;
+    border-radius: 15px;
+    background-color: red;
+    margin-top: 10px;
+    width: 0%;
+    /* display: none; */
+}
