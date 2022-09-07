@@ -68,26 +68,29 @@ export default class CalendarUtils {
         calendarUrl += "&path=/calendar/view/Month";
         break;
 
-      default:
-        let dataArr = [
-          "BEGIN:VCALENDAR",
-          "VERSION:2.0",
-          "BEGIN:VEVENT",
-          "URL:" + document.URL,
-          "DTSTART:" + this.formatTime(event.startTime),
-          "DTEND:" + this.formatTime(event.endTime),
-          "SUMMARY:" + event.title,
-          "DESCRIPTION:" + event.description,
-          "LOCATION:" + event.location,
+      case "IOS": {
+        const components = ["BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT"];
+        if (typeof document !== "undefined") {
+          components.push(`URL:${document.URL}`);
+        }
+        components.push(
+          `DTSTART:${this.formatTime(event.startTime)}`,
+          `DTEND:${this.formatTime(event.endTime)}`,
+          `SUMMARY:${event.title}`,
+          `DESCRIPTION:${event.description}`,
+          `LOCATION:${event.location}`,
           "END:VEVENT",
-          "END:VCALENDAR",
-        ];
+          "END:VCALENDAR"
+        );
 
-        console.log(dataArr);
+        calendarUrl = encodeURI(
+          `data:text/calendar;charset=utf8,${components.join("\n")}`
+        );
+        break;
+      }
 
-        let dataUrl = dataArr.join("\n");
-
-        calendarUrl = document.URL;
+      default:
+        calendarUrl = "";
     }
 
     return calendarUrl;

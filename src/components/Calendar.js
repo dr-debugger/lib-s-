@@ -26,6 +26,9 @@ const Calendar = () => {
       {
         type: "outlookcom",
       },
+      {
+        type: "IOS",
+      },
     ];
 
     let newArrWithSrc = arr.map((item) => {
@@ -33,6 +36,7 @@ const Calendar = () => {
         ...item,
         src: calendarClass.buildUrl(event, item.type),
         id: calendarClass.getRandomKey(),
+        isFile: item.type === "IOS",
       };
     });
 
@@ -40,7 +44,17 @@ const Calendar = () => {
     setBtns(newArrWithSrc);
   };
 
-  const handleLinkClick = (src) => {
+  const handleLinkClick = (src, isFile) => {
+    if (isFile) {
+      const a = document.createElement("a");
+      a.href = src;
+      a.download = "file_name";
+      // a.target = "_blank";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
     let url = src || "";
     window.open(url, "_blank");
   };
@@ -56,7 +70,7 @@ const Calendar = () => {
       {btns.length > 0 &&
         btns.map((elem) => (
           <div key={elem.id}>
-            <button onClick={() => handleLinkClick(elem.src)}>
+            <button onClick={() => handleLinkClick(elem.src, elem.isFile)}>
               {elem.type}
             </button>
           </div>
