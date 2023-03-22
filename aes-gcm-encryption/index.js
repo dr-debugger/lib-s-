@@ -10,6 +10,13 @@ const generateKey = async () => {
   );
 };
 
+async function importSecretKey(rawKey) {
+  return window.crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, [
+    "encrypt",
+    "decrypt",
+  ]);
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
 const encode = (data) => {
   const encoder = new TextEncoder();
@@ -49,6 +56,9 @@ const encrypt = async (data, key) => {
 
 const pack = (buffer) => {
   return window.btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+
+  // 🥴 for Buffer.from()
+  // return Buffer.from(buffer).toString('base64');
 };
 
 /**
@@ -59,13 +69,16 @@ const pack = (buffer) => {
  * @returns raw binary buffers
  */
 const unpack = (packed) => {
-  const string = window.atob(packed);
-  const buffer = new ArrayBuffer(string.length);
-  const bufferView = new Uint8Array(buffer);
-  for (let i = 0; i < string.length; i++) {
-    bufferView[i] = string.charCodeAt(i);
-  }
-  return buffer;
+  // const string = window.atob(packed);
+  // const buffer = new ArrayBuffer(string.length);
+  // const bufferView = new Uint8Array(buffer);
+  // for (let i = 0; i < string.length; i++) {
+  //   bufferView[i] = string.charCodeAt(i);
+  // }
+  // return buffer;
+
+  // 🥴 for Buffer.from()
+  return new Uint8Array(Buffer.from(packed, "base64"));
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder
@@ -90,7 +103,12 @@ const decrypt = async (cipher, key, iv) => {
 const app = async () => {
   // encrypt message
   const first = "Hello, World!";
-  const key = await generateKey(); // 88b78fc641b290f147fa6764a0daa7df
+
+  const key = await importSecretKey(
+    Buffer.from("88b78fc641b290f147fa6764a0daa7df", "utf-8")
+  );
+
+  // const key = await generateKey(); // 88b78fc641b290f147fa6764a0daa7df
   const { cipher, iv } = await encrypt(first, key);
 
   const cipherToString = pack(cipher),
