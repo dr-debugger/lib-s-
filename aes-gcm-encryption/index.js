@@ -90,7 +90,7 @@ const decrypt = async (cipher, key, iv) => {
 const app = async () => {
   // encrypt message
   const first = "Hello, World!";
-  const key = await generateKey();
+  const key = await generateKey(); // 88b78fc641b290f147fa6764a0daa7df
   const { cipher, iv } = await encrypt(first, key);
 
   const cipherToString = pack(cipher),
